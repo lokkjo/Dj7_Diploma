@@ -1,0 +1,36 @@
+{% extends 'goods/empty_section.html' %}
+
+{% block main %}
+<main role="main">
+
+  <div class="container">
+    <!-- Example row of columns -->
+
+    <h1>Аксессуары</h1>
+
+    <div class="row">
+
+      {% for acc in accessoires %}
+      <div class="col-md-4">
+
+        <h2>{{ acc.name }}</h2>
+
+        <a href="{% url 'goods:item_page' acc.name_slug %}">
+
+          <img src="{{ acc.image }}" width="180">
+
+        </a>
+        <p>{{ acc.description }}</p>
+
+        <form>
+          <input type="submit" class="btn btn-secondary" value="Добавить в корзину »">
+        </form>
+      </div>
+      {% endfor %}
+
+
+    </div> <!-- /container -->
+
+  </div>
+</main>
+{% endblock %}
