@@ -1,64 +1,73 @@
 {% extends 'goods/empty_section.html' %}
-
+{% load in_category %}{% load static %}
 {% block main %}
 <main role="main">
 
   <div class="jumbotron">
     <div class="container">
       <h1 class="display-4">Добро пожаловать на сайт просто магазина</h1>
-      <p>Лучшие мобилы только у нас:</p>
+
     </div>
   </div>
 
+  {% for offer in offers %}
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="display-4">{{ offer.headline }}</h1>
+      <p>{{ offer.sub_line }}</p>
+    </div>
+  </div>
 
   <div class="container mb-5">
     <!-- Example row of columns -->
     <div class="row">
-      {% for phone in phones %}
+      {% for item in items|in_category:offer.category_id %}
       <div class="col-md-4">
-        <h2>{{ phone.name }}</h2>
-        {% url 'goods:item_page' phone.name_slug as phone_url %}
-        <a href="{{ phone_url }}">
-          <img src="{{ phone.image }}" width="180">
+        <h2>{{ item.name }}</h2>
+        {% url 'goods:item_page' item.name_slug as item_url %}
+        <a href="{{ item_url }}">
+          <img src="{% get_media_prefix %}{{ item.image }}" width="180">
         </a>
         <form>
           <input type="submit" class="btn btn-secondary" value="Добавить в корзину »">
         </form>
       </div>
       {% endfor %}
+
     </div>
 
   </div> <!-- /container -->
+  {% endfor %}
 
-  <div class="jumbotron">
-    <div class="container">
-      <h1 class="display-4">Не знаете что одеть летом?</h1>
-      <p>Вот что мы можем предложить:</p>
-    </div>
-  </div>
+<!--  <div class="jumbotron">-->
+<!--    <div class="container">-->
+<!--      <h1 class="display-4">Не знаете что одеть летом?</h1>-->
+<!--      <p>Вот что мы можем предложить:</p>-->
+<!--    </div>-->
+<!--  </div>-->
 
 
-  <div class="container mb-5">
-    <!-- Example row of columns -->
-    <div class="row">
-      {% for acc in accessoires %}
+<!--  <div class="container mb-5">-->
+<!--    &lt;!&ndash; Example row of columns &ndash;&gt;-->
+<!--    <div class="row">-->
+<!--      {% for acc in accessoires %}-->
 
-      <div class="col-md-4">
-        <h2>{{ acc.name }}</h2>
-        {% url 'goods:item_page' acc.name_slug as acc_url %}
-        <a href="{{ acc_url }}">
+<!--      <div class="col-md-4">-->
+<!--        <h2>{{ acc.name }}</h2>-->
+<!--        {% url 'goods:item_page' acc.name_slug as acc_url %}-->
+<!--        <a href="{{ acc_url }}">-->
 
-          <img src="{{ acc.image }}" width="180">
+<!--          <img src="{{ acc.image }}" width="180">-->
 
-        </a>
+<!--        </a>-->
 
-        <form>
-          <input type="submit" class="btn btn-secondary" value="Добавить в корзину »">
-        </form>
-      </div>
-    {% endfor %}
-    </div>
-  </div> <!-- /container -->
+<!--        <form>-->
+<!--          <input type="submit" class="btn btn-secondary" value="Добавить в корзину »">-->
+<!--        </form>-->
+<!--      </div>-->
+<!--    {% endfor %}-->
+<!--    </div>-->
+<!--  </div> &lt;!&ndash; /container &ndash;&gt;-->
 
 </main>
 {% endblock %}

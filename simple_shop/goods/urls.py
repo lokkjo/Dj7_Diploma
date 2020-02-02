@@ -5,10 +5,8 @@ from . import views
 app_name = 'goods'
 
 urlpatterns = [
-    path('', views.index, name='index'),
     path('item/<str:name_slug>/', views.item_page, name='item_page'),
-    path('phones/', views.phones, name='phones'),
-    path('accessoires/', views.accessoires, name='accessoires'),
+    path('cart/', views.cart, name='cart'),
     path('login/', views.login, name='login'),
-    path('cart/', views.cart, name='cart')
+    path('<str:item_type>/', views.items_by_category, name='category'),
 ]

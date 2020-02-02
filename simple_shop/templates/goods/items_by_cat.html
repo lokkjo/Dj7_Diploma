@@ -1,0 +1,59 @@
+{% extends 'goods/empty_section.html' %}{% load static %}
+
+{% block main %}
+<main role="main">
+
+  <div class="container">
+    <!-- Example row of columns -->
+    {% for cat in category %}
+
+    <h1>{{ cat.name }}</h1>
+    {% endfor %}
+
+    <div class="row">
+        {% for item in page %}
+
+
+      <div class="col-md-4">
+
+        <h2>{{ item.name }}</h2>
+
+        <a href="{% url 'goods:item_page' item.name_slug %}">
+
+          <img src="{% get_media_prefix %}{{ item.image }}" width="180">
+
+        </a>
+        <p>{{ item.description }}</p>
+
+        <form>
+          <input type="submit" class="btn btn-secondary" value="Добавить в корзину »">
+        </form>
+      </div>
+    {% endfor %}
+
+
+
+    </div> <!-- /container -->
+
+    <hr>
+    <div class="pagination">
+    <span class="step-links">
+        {% if page.has_previous %}
+            <a class="btn btn-secondary" role="button" href="?page=1">&laquo; В начало</a>
+            <a class="btn btn-secondary" role="button" href="?page={{ page.previous_page_number }}">Предыдущая</a>
+        {% endif %}
+
+        <span class="current">
+            Страница {{ page.number }} из {{ page.paginator.num_pages }}.
+        </span>
+
+        {% if page.has_next %}
+            <a class="btn btn-secondary" role="button" href="?page={{ page.next_page_number }}">Следующая</a>
+            <a class="btn btn-secondary" role="button" href="?page={{ page.paginator.num_pages }}">В конец &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+  </div>
+</main>
+{% endblock %}
