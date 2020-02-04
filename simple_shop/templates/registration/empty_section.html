@@ -68,6 +68,7 @@
        href="{% url 'goods:cart' %}">
       Корзина</a>
 
+
     {% if user.is_authenticated %}
     <a class="btn btn-outline-success my-2 my-sm-0" role="button"
        href="{% url 'logout' %}">
@@ -77,6 +78,7 @@
        href="{% url 'login' %}">
       Войти</a>
     {% endif %}
+
   </div>
 </nav>
 {% endblock %}

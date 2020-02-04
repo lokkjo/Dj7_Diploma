@@ -1,15 +1,10 @@
 from django.core.paginator import Paginator
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, redirect
 
-from .models import Item, ItemType
+from .models import Item, ItemType, Review
+from .forms import ReviewCreateForm
 
 
-
-def login(request):
-    template = 'goods/login.html'
-    context = {}
-    return render(request, template, context)
 
 def cart(request):
     template = 'goods/cart.html'
@@ -37,7 +32,29 @@ def item_page(request, name_slug):
     template = 'goods/item.html'
     position = Item.objects.all().prefetch_related()\
         .filter(name_slug=name_slug)
+    pos_id = []
+    for content in position:
+        pos_id.append(content)
+
+
+    if request.method == 'POST':
+        review_form = ReviewCreateForm(request.POST)
+        if review_form.is_valid():
+            review_text = review_form.cleaned_data['review_text']
+            rating = review_form.cleaned_data['rating']
+            # new_review = review_form.save(commit=False)
+            author = request.user
+            reviewed_item = pos_id[0]
+            new_review = Review.objects.create(
+                author=author, reviewed_item=reviewed_item,
+                review_text=review_text, rating=rating
+            )
+            return redirect(f'/shop/item/{name_slug}/')
+    else:
+        review_form = ReviewCreateForm()
+
     context = {
-        'position': position
+        'position': position,
+        'form': review_form,
     }
     return render(request, template, context)
