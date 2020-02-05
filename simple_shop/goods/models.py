@@ -56,3 +56,29 @@ class Review(models.Model):
                               MaxValueValidator(5)]
     )
 
+
+class Order(models.Model):
+    buyer = models.ForeignKey('users.User', on_delete=models.CASCADE,
+                              verbose_name='покупатель')
+    items = models.ManyToManyField(Item, through='OrderPosition')
+    date = models.DateTimeField(default=timezone.now,
+                                verbose_name='дата создания')
+    is_closed = models.BooleanField(default=False,
+                                    verbose_name='сформирован')
+
+    class Meta:
+        verbose_name = 'заказ'
+        verbose_name_plural = 'заказы'
+
+    def __str__(self):
+        return f"Заказ № {self.pk}"
+
+
+class OrderPosition(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+
+    class Meta:
+        verbose_name = 'позиция'
+        verbose_name_plural = 'позиции'

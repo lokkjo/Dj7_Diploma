@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import ugettext_lazy as _
 
-from .models import User, Order, OrderPosition
+from .models import User
 
 
 @admin.register(User)
@@ -34,16 +34,3 @@ class UserAdmin(DjangoUserAdmin):
     ordering = ('email',)
 
 
-class OrderPositionInline(admin.TabularInline):
-    model = OrderPosition
-
-
-class OrderAdmin(admin.ModelAdmin):
-    model = Order
-    inlines = [
-        OrderPositionInline
-    ]
-
-
-# admin.site.register(User, UserAdmin)
-admin.site.register(Order, OrderAdmin)

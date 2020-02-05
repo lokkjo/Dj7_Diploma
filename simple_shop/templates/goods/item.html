@@ -1,5 +1,5 @@
 {% extends 'goods/empty_section.html' %}{% load static %}
-{% block main %}{% load in_stars %}
+{% block main %}{% load in_stars %}{% load add_to_cart %}
 <main role="main">
 
   {% for item in position %}
@@ -15,10 +15,10 @@
         <img src="{% get_media_prefix %}{{ item.image }}" width="120">
 
         <p>{{ item.description }}</p>
-        <form method="post" action="./cart/">
+        <form method="post" action="{% url 'goods:cart' %}">
           <input type="hidden" name="csrfmiddlewaretoken"
                  value="{{ csrf_token }}">
-          <input type="hidden" name="merchandise_id" value="1">
+          <input type="hidden" name="position_id" value="{{ item.id }}">
           <input type="submit" class="btn btn-secondary" value="Добавить в корзину »">
         </form>
       </div>

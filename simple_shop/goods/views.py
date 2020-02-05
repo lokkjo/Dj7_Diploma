@@ -1,15 +1,74 @@
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
-from .models import Item, ItemType, Review
+from .models import Item, ItemType, Review, Order
 from .forms import ReviewCreateForm
 
 
-
+@login_required
 def cart(request):
     template = 'goods/cart.html'
-    context = {}
+    pos_id = request.POST.get('position_id')
+
+    print('from cart', pos_id)
+
+    user = request.user
+    position = Item.objects.prefetch_related().filter(id=pos_id)
+    order_id = request.session.get('order_id')
+    order_record = Order.objects.prefetch_related().filter(
+        id=order_id, is_closed=False
+    )
+
+    if order_record.exists():
+        for order in order_record:
+            pos_record = order.orderposition_set.filter(
+                item_id=pos_id
+            )
+            if pos_record.exists():
+                for data in pos_record:
+                    data.quantity = data.quantity + 1
+                    data.save()
+            else:
+                for pos in position:
+                    order.items.add(pos)
+                    order.save()
+    else:
+        order = Order.objects.create(buyer = user)
+        for pos in position:
+            order.items.add(pos)
+            order.save()
+        request.session['order_id'] = f'{order.id}'
+        # print('or order is:', order.id, order.buyer,
+        #       order.items.value_list())
+
+    # if request.method == 'POST':
+    #
+    #     return redirect(reverse('success'))
+    context = {'order_record': order_record}
+    response = render(request, template, context)
+
+    return response
+
+
+def success_order(request):
+    template = 'goods/success_order.html'
+    order_id = request.session.get('order_id')
+    order_record = Order.objects.filter(
+        id=order_id,
+    )
+    for order in order_record:
+        order.is_closed = True
+        order.save()
+
+    # clean empty orders
+    # empty_orders = Order.objects.filter(items=None)
+    # empty_orders.delete()
+
+    context = {'order_id': order_id}
     return render(request, template, context)
+
 
 
 def items_by_category(request, item_type):
