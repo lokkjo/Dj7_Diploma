@@ -27,7 +27,7 @@
 
         <form method="post" action="{% url 'goods:cart' %}">
           <input type="hidden" name="csrfmiddlewaretoken"
-                 value="{{ csrf_token }}">>
+                 value="{{ csrf_token }}">
           <input type="hidden" name="position_id" value="{{ item.id }}">
           <input type="submit" class="btn btn-secondary" value="Добавить в корзину »">
         </form>
