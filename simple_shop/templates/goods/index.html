@@ -28,7 +28,10 @@
         <a href="{{ item_url }}">
           <img src="{% get_media_prefix %}{{ item.image }}" width="180">
         </a>
-        <form>
+        <form method="post" action="{% url 'goods:cart' %}">
+          <input type="hidden" name="csrfmiddlewaretoken"
+                 value="{{ csrf_token }}">>
+          <input type="hidden" name="position_id" value="{{ item.id }}">
           <input type="submit" class="btn btn-secondary" value="Добавить в корзину »">
         </form>
       </div>
@@ -38,36 +41,6 @@
 
   </div> <!-- /container -->
   {% endfor %}
-
-<!--  <div class="jumbotron">-->
-<!--    <div class="container">-->
-<!--      <h1 class="display-4">Не знаете что одеть летом?</h1>-->
-<!--      <p>Вот что мы можем предложить:</p>-->
-<!--    </div>-->
-<!--  </div>-->
-
-
-<!--  <div class="container mb-5">-->
-<!--    &lt;!&ndash; Example row of columns &ndash;&gt;-->
-<!--    <div class="row">-->
-<!--      {% for acc in accessoires %}-->
-
-<!--      <div class="col-md-4">-->
-<!--        <h2>{{ acc.name }}</h2>-->
-<!--        {% url 'goods:item_page' acc.name_slug as acc_url %}-->
-<!--        <a href="{{ acc_url }}">-->
-
-<!--          <img src="{{ acc.image }}" width="180">-->
-
-<!--        </a>-->
-
-<!--        <form>-->
-<!--          <input type="submit" class="btn btn-secondary" value="Добавить в корзину »">-->
-<!--        </form>-->
-<!--      </div>-->
-<!--    {% endfor %}-->
-<!--    </div>-->
-<!--  </div> &lt;!&ndash; /container &ndash;&gt;-->
 
 </main>
 {% endblock %}

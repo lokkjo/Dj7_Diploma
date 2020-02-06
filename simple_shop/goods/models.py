@@ -6,18 +6,13 @@ from django.core.validators import MinValueValidator, \
 from django.db import models
 
 # Create your models here.
-from django.conf import settings
 from django.utils import timezone
-from django.utils.text import slugify
 
 # from users.models import User
-
-goods_fs = FileSystemStorage(str(Path('media/photos')))
 
 
 class Item(models.Model):
     name = models.CharField(max_length=64)
-    # image = models.ImageField(storage=goods_fs)
     image = models.ImageField(upload_to='photos/')
     description = models.CharField(max_length=400)
     type = models.ForeignKey('ItemType', on_delete=models.CASCADE)
@@ -82,3 +77,6 @@ class OrderPosition(models.Model):
     class Meta:
         verbose_name = 'позиция'
         verbose_name_plural = 'позиции'
+
+    def __str__(self):
+        return f"{self.item}, {self.quantity} шт."

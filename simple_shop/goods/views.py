@@ -1,7 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
+
+from django.db.models import ObjectDoesNotExist
 
 from .models import Item, ItemType, Review, Order
 from .forms import ReviewCreateForm
@@ -10,46 +13,43 @@ from .forms import ReviewCreateForm
 @login_required
 def cart(request):
     template = 'goods/cart.html'
-    pos_id = request.POST.get('position_id')
 
-    print('from cart', pos_id)
+    if request.method == 'GET':
+        order_id = request.session.get('order_id')
+        order = Order.objects.prefetch_related().get(
+            id=order_id, is_closed=False
+        )
+        context = {'order': order}
+        return render(request, template, context)
 
-    user = request.user
-    position = Item.objects.prefetch_related().filter(id=pos_id)
-    order_id = request.session.get('order_id')
-    order_record = Order.objects.prefetch_related().filter(
-        id=order_id, is_closed=False
-    )
+    if request.method == 'POST':
+        pos_id = request.POST.get('position_id')
 
-    if order_record.exists():
-        for order in order_record:
-            pos_record = order.orderposition_set.filter(
+        print('from cart', pos_id)
+
+        user = request.user
+        position = Item.objects.prefetch_related().get(id=pos_id)
+        order_id = request.session.get('order_id')
+        try:
+            order = Order.objects.prefetch_related().get(
+                id=order_id, is_closed=False
+            )
+        except ObjectDoesNotExist:
+            order = Order.objects.create(buyer=user)
+            request.session['order_id'] = f'{order.id}'
+
+        try:
+            pos_record = order.orderposition_set.get(
                 item_id=pos_id
             )
-            if pos_record.exists():
-                for data in pos_record:
-                    data.quantity = data.quantity + 1
-                    data.save()
-            else:
-                for pos in position:
-                    order.items.add(pos)
-                    order.save()
-    else:
-        order = Order.objects.create(buyer = user)
-        for pos in position:
-            order.items.add(pos)
+            pos_record.quantity = pos_record.quantity + 1
+            pos_record.save()
+        except ObjectDoesNotExist:
+            order.items.add(position)
             order.save()
-        request.session['order_id'] = f'{order.id}'
-        # print('or order is:', order.id, order.buyer,
-        #       order.items.value_list())
 
-    # if request.method == 'POST':
-    #
-    #     return redirect(reverse('success'))
-    context = {'order_record': order_record}
-    response = render(request, template, context)
+        return HttpResponseRedirect(reverse('goods:cart'))
 
-    return response
 
 
 def success_order(request):
@@ -61,10 +61,6 @@ def success_order(request):
     for order in order_record:
         order.is_closed = True
         order.save()
-
-    # clean empty orders
-    # empty_orders = Order.objects.filter(items=None)
-    # empty_orders.delete()
 
     context = {'order_id': order_id}
     return render(request, template, context)
