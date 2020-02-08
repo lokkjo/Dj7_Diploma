@@ -17,28 +17,10 @@
             <h6 class="my-0">{{ item.name }}</h6>
             <small class="text-muted">{{ item.description }}</small>
           </div>
-          {% for field in item.orderposition_set.all %}
-          <span class="text-muted">{{ field.quantity }}</span>
-          {% endfor %}
+          <span class="text-muted">{{ item.orderposition_set.values.0.quantity }}</span>
 
         </li>
         {% endfor %}
-
-<!--        <li class="list-group-item d-flex justify-content-between lh-condensed">-->
-<!--          <div>-->
-<!--            <h6 class="my-0">iPhone 7</h6>-->
-<!--            <small class="text-muted">Телефон с яблоком</small>-->
-<!--          </div>-->
-<!--          <span class="text-muted">1</span>-->
-<!--        </li>-->
-
-<!--        <li class="list-group-item d-flex justify-content-between lh-condensed">-->
-<!--          <div>-->
-<!--            <h6 class="my-0">Pixel 2</h6>-->
-<!--            <small class="text-muted">Классная камера</small>-->
-<!--          </div>-->
-<!--          <span class="text-muted">1</span>-->
-<!--        </li>-->
 
       </ul>
 

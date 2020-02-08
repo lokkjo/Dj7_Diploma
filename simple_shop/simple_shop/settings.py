@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'django.contrib.sites',
 
     # Local apps
     'goods.apps.GoodsConfig',
@@ -120,7 +119,9 @@ AUTH_USER_MODEL = 'users.User'
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+# LANGUAGE_CODE = 'en-us'
+
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'Europe/Moscow'
 

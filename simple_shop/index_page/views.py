@@ -6,6 +6,9 @@ from goods.models import Item
 # Create your views here.
 
 def index(request):
+    """
+    Главная страница
+    """
     template = 'goods/index.html'
     items = Item.objects.all().prefetch_related()
     offers = Offer.objects.all().prefetch_related().values().order_by('-add_date')[:3]

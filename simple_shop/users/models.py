@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import ugettext_lazy as _
 
-from django.utils import timezone
 
 # from goods.models import Item
 
@@ -16,7 +15,8 @@ class UserManager(BaseUserManager):
 
     def _create_user(self, email, password, **extra_fields):
         """
-        Create and save a User with the given email and password
+        База для создания и сохранения Пользователя (User)
+        принимает почту и пароль
         """
         if not email:
             raise ValueError('The given email must be set')
@@ -28,7 +28,8 @@ class UserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **extra_fields):
         """
-        Create and save a regular User with the given email and password
+        Создаёт и сохраняет простого пользователя
+        принимает почту и пароль
         """
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
@@ -36,7 +37,8 @@ class UserManager(BaseUserManager):
 
     def create_superuser(self, email, password, **extra_fields):
         """
-        Create and save a SuperUser with the given email and password
+        Создаёт и сохраняет пользователя-администратора (superuser)
+        принимает почту и пароль
         """
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
@@ -49,13 +51,12 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-
 class User(AbstractUser):
     """
-    User model
+    Модель пользователя (User)
     """
     username = None
-    email = models.EmailField(_('email address'), unique=True)
+    email = models.EmailField(_('почта'), unique=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -68,4 +69,3 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
-

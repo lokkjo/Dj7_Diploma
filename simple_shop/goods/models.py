@@ -12,6 +12,9 @@ from django.utils import timezone
 
 
 class Item(models.Model):
+    """
+    Модель наименования товара
+    """
     name = models.CharField(max_length=64)
     image = models.ImageField(upload_to='photos/')
     description = models.CharField(max_length=400)
@@ -30,6 +33,10 @@ class Item(models.Model):
 
 
 class ItemType(models.Model):
+    """
+    Модель категории товара, поле name используется для заголовка
+    страницы категории
+    """
     item_type = models.CharField(max_length=32)
     name = models.CharField(max_length=32, default='NewName')
 
@@ -42,6 +49,9 @@ class ItemType(models.Model):
 
 
 class Review(models.Model):
+    """
+    Модель формирования отзыва на товар
+    """
     author = models.ForeignKey('users.User', on_delete=models.CASCADE)
     reviewed_item = models.ForeignKey(Item, on_delete=models.CASCADE,
                                       related_name='reviews')
@@ -53,6 +63,9 @@ class Review(models.Model):
 
 
 class Order(models.Model):
+    """
+    Модель формирования заказа
+    """
     buyer = models.ForeignKey('users.User', on_delete=models.CASCADE,
                               verbose_name='покупатель')
     items = models.ManyToManyField(Item, through='OrderPosition')
@@ -70,6 +83,11 @@ class Order(models.Model):
 
 
 class OrderPosition(models.Model):
+    """
+    Промежуточная модель m2m (Order <- OrderPosition -> Item)
+    для хранения данных о количестве единиц
+    товара в заказе (поле quantity)
+    """
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)

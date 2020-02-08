@@ -10,6 +10,9 @@ RATING_CHOICES = [
 ]
 
 class ReviewCreateForm(forms.ModelForm):
+    """
+    Форма создания отзыва на странице наименования товара (item page)
+    """
     rating = forms.ChoiceField(choices=RATING_CHOICES,
                                widget=forms.RadioSelect())
 
