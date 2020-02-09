@@ -24,15 +24,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-try:
-    from .settings_local import DEBUG as LOCAL_DEBUG
-    from .settings_local import SECRET_KEY as LOCAL_SECRET_KEY
-    SECRET_KEY = LOCAL_SECRET_KEY
 
-    # SECURITY WARNING: don't run with debug turned on in production!
-    DEBUG = LOCAL_DEBUG
-except:
-    pass
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'd+mw&mscg5i&tx+#@bf+6m%e+d5z!u#!n%z-^o9u7y1felv2o&'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False
+
+
 
 ALLOWED_HOSTS = []
 
@@ -149,3 +148,11 @@ LOGOUT_REDIRECT_URL = '/'
 
 
 FIXTURE_DIRS = '/fixtures/'
+
+
+# import from local settings
+try:
+    from .local_settings import *
+except:
+    pass
+

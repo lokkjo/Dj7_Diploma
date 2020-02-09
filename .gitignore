@@ -1,0 +1,26 @@
+#.gitignore
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# local files and folders on workstation
+resources/
+venv/
+venv2/
+venv3/
+.idea/
+/simple_shop/static/*.7z
+/old_README.md
+*.pyc
+
+# local sqlite db
+*.sqlite3
+
+# local_settings.py
+/simple_shop/simple_shop/local_settings.py

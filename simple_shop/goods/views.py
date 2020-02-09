@@ -30,7 +30,8 @@ def cart(request):
     if request.method == 'POST':
         pos_id = request.POST.get('position_id')
 
-        print('from cart', pos_id)
+        # debug print message
+        # print('from cart', pos_id)
 
         user = request.user
         position = Item.objects.prefetch_related().get(id=pos_id)
@@ -120,7 +121,7 @@ def item_page(request, name_slug):
                 author=author, reviewed_item=position,
                 review_text=review_text, rating=rating
             )
-            return redirect(f'/shop/item/{name_slug}/')
+            return redirect('goods:item_page', f'{name_slug}')
     else:
         review_form = ReviewCreateForm()
 
