@@ -3,8 +3,6 @@ from django.contrib import admin
 from .models import Item, ItemType, Review, Order, OrderPosition
 
 
-# Register your models here.
-
 class ReviewInline(admin.TabularInline):
     model = Review
     extra = 1

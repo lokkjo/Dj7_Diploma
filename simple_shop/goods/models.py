@@ -5,7 +5,6 @@ from django.core.validators import MinValueValidator, \
     MaxValueValidator
 from django.db import models
 
-# Create your models here.
 from django.utils import timezone
 
 # from users.models import User
@@ -19,8 +18,8 @@ class Item(models.Model):
     image = models.ImageField(upload_to='photos/')
     description = models.CharField(max_length=400)
     type = models.ForeignKey('ItemType', on_delete=models.CASCADE)
-    review = models.ManyToManyField('users.User', through='Review',
-                                    related_name='items')
+    # review = models.ManyToManyField('users.User', through='Review',
+    #                                 related_name='items')
     name_slug = models.SlugField()
     add_time = models.DateTimeField(default = timezone.now)
 
@@ -37,15 +36,15 @@ class ItemType(models.Model):
     Модель категории товара, поле name используется для заголовка
     страницы категории
     """
-    item_type = models.CharField(max_length=32)
-    name = models.CharField(max_length=32, default='NewName')
+    slug = models.CharField(max_length=32)
+    display_name = models.CharField(max_length=32, default='NewName')
 
     class Meta:
         verbose_name = 'категория товара'
         verbose_name_plural = 'категории товара'
 
     def __str__(self):
-        return self.item_type
+        return self.slug
 
 
 class Review(models.Model):
@@ -53,9 +52,9 @@ class Review(models.Model):
     Модель формирования отзыва на товар
     """
     author = models.ForeignKey('users.User', on_delete=models.CASCADE)
-    reviewed_item = models.ForeignKey(Item, on_delete=models.CASCADE,
-                                      related_name='reviews')
-    review_text = models.CharField(max_length=200)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE,
+                             related_name='reviews')
+    text = models.CharField(max_length=200)
     rating = models.PositiveIntegerField(
         default=1,validators=[MinValueValidator(1),
                               MaxValueValidator(5)]

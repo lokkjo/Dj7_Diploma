@@ -18,10 +18,10 @@ class ReviewCreateForm(forms.ModelForm):
 
     class Meta:
         model = Review
-        fields = ['review_text', 'rating']
+        fields = ['text', 'rating']
         exclude = ['author', 'reviewed_item']
         widgets = {
-            'review_text': forms.Textarea(attrs={
+            'text': forms.Textarea(attrs={
                     'id': "content",
                     'placeholder': "Содержание",
                     'class': 'form-control',

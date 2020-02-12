@@ -28,7 +28,7 @@
         {% if position.reviews.all %}
             {% for review in position.reviews.all %}
                 {{ review.rating|in_stars }} <span>{{ review.author.first_name }}</span>
-                <p> {{ review.review_text}}</p>
+                <p> {{ review.text}}</p>
             {% endfor %}
         {% else%}
             <p>Пока отзывов на товар нет. Значит, Ваш будет первым!</p>
@@ -46,7 +46,7 @@
                  value="{{ csrf_token }}">
           <div class="form-group">
             <label for="content">Содержание</label><br>
-            {{ form.review_text }}
+            {{ form.text }}
           </div>
           {% for radio in form.rating %}
           <div class="form-check">

@@ -9,6 +9,9 @@ from django.db.models import ObjectDoesNotExist
 from .models import Item, ItemType, Review, Order
 from .forms import ReviewCreateForm
 
+CATEGORY_ITEMS_COUNT = 6 # Items for page in items_by_category view
+
+
 
 @login_required
 def cart(request):
@@ -29,9 +32,6 @@ def cart(request):
 
     if request.method == 'POST':
         pos_id = request.POST.get('position_id')
-
-        # debug print message
-        # print('from cart', pos_id)
 
         user = request.user
         position = Item.objects.prefetch_related().get(id=pos_id)
@@ -66,36 +66,36 @@ def success_order(request):
     """
     template = 'goods/success_order.html'
     order_id = request.session.get('order_id')
+    context = {'order_id': order_id}
     order_record = Order.objects.filter(
         id=order_id,
     )
-    for order in order_record:
-        order.is_closed = True
-        order.save()
+    order_record.update(is_closed=True)
+    request.session.pop('order_id')
 
-    context = {'order_id': order_id}
     return render(request, template, context)
 
 
 
-def items_by_category(request, item_type):
+def items_by_category(request, item_type_slug):
     """
     Страница категории с пагинацией
     :param request: стандартный запрос
-    :param item_type: идентификатор категории,
+    :param item_type_slug: идентификатор категории,
         соответствует полю models.ItemType.item_type
     """
     page_num = int(request.GET.get('page', 1))
-    count = 6
+    count = CATEGORY_ITEMS_COUNT
     template = 'goods/items_by_cat.html'
-    items = Item.objects.all().prefetch_related()\
-        .filter(type__item_type=item_type).order_by('-add_time')
-    category = ItemType.objects.all().get(item_type=item_type)
+    items = Item.objects.all().prefetch_related('type')\
+        .filter(type__slug=item_type_slug).order_by('-add_time')
+    category = items.first().type.display_name
+    print('cat is:', category)
     paginator = Paginator(items, count)
     page = paginator.get_page(page_num)
     context = {
         'items': items,
-        'category': category.name,
+        'category': category,
         'page': page
     }
     return render(request, template, context)
@@ -108,18 +108,17 @@ def item_page(request, name_slug):
         соответствует полю models.Item.name_slug
     """
     template = 'goods/item.html'
-    position = Item.objects.all().prefetch_related()\
-        .get(name_slug=name_slug)
+    position = Item.objects.all().get(name_slug=name_slug)
 
     if request.method == 'POST':
         review_form = ReviewCreateForm(request.POST)
         if review_form.is_valid():
-            review_text = review_form.cleaned_data['review_text']
+            text = review_form.cleaned_data['text']
             rating = review_form.cleaned_data['rating']
             author = request.user
             new_review = Review.objects.create(
-                author=author, reviewed_item=position,
-                review_text=review_text, rating=rating
+                author=author, item=position,
+                text=text, rating=rating
             )
             return redirect('goods:item_page', f'{name_slug}')
     else:
