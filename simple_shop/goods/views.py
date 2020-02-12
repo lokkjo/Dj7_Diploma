@@ -6,11 +6,10 @@ from django.urls import reverse
 
 from django.db.models import ObjectDoesNotExist
 
-from .models import Item, ItemType, Review, Order
+from .models import Item, Review, Order
 from .forms import ReviewCreateForm
 
-CATEGORY_ITEMS_COUNT = 6 # Items for page in items_by_category view
-
+CATEGORY_ITEMS_COUNT = 6  # Items for page in items_by_category view
 
 
 @login_required
@@ -21,33 +20,25 @@ def cart(request):
     в корзину).
     """
     template = 'goods/cart.html'
+    pos_id = request.POST.get('position_id')
+    user = request.user
+
+    try:
+        order_id = request.session.get('order_id')
+        order = Order.objects.get(id=order_id, is_closed=False)
+    except ObjectDoesNotExist:
+        order = Order.objects.create(buyer=user)
+        request.session['order_id'] = f'{order.id}'
 
     if request.method == 'GET':
-        order_id = request.session.get('order_id')
-        order = Order.objects.prefetch_related().get(
-            id=order_id, is_closed=False
-        )
         context = {'order': order}
         return render(request, template, context)
 
     if request.method == 'POST':
-        pos_id = request.POST.get('position_id')
-
-        user = request.user
-        position = Item.objects.prefetch_related().get(id=pos_id)
-        order_id = request.session.get('order_id')
-        try:
-            order = Order.objects.prefetch_related().get(
-                id=order_id, is_closed=False
-            )
-        except ObjectDoesNotExist:
-            order = Order.objects.create(buyer=user)
-            request.session['order_id'] = f'{order.id}'
+        position = Item.objects.get(id=pos_id)
 
         try:
-            pos_record = order.orderposition_set.get(
-                item_id=pos_id
-            )
+            pos_record = order.orderposition_set.get(item_id=pos_id)
             pos_record.quantity = pos_record.quantity + 1
             pos_record.save()
         except ObjectDoesNotExist:
@@ -55,7 +46,6 @@ def cart(request):
             order.save()
 
         return HttpResponseRedirect(reverse('goods:cart'))
-
 
 
 def success_order(request):
@@ -67,14 +57,11 @@ def success_order(request):
     template = 'goods/success_order.html'
     order_id = request.session.get('order_id')
     context = {'order_id': order_id}
-    order_record = Order.objects.filter(
-        id=order_id,
-    )
+    order_record = Order.objects.filter(id=order_id, )
     order_record.update(is_closed=True)
     request.session.pop('order_id')
 
     return render(request, template, context)
-
 
 
 def items_by_category(request, item_type_slug):
@@ -87,8 +74,8 @@ def items_by_category(request, item_type_slug):
     page_num = int(request.GET.get('page', 1))
     count = CATEGORY_ITEMS_COUNT
     template = 'goods/items_by_cat.html'
-    items = Item.objects.all().prefetch_related('type')\
-        .filter(type__slug=item_type_slug).order_by('-add_time')
+    items = Item.objects.all().prefetch_related('type')\.filter \
+        (type__slug=item_type_slug).order_by('-add_time')
     category = items.first().type.display_name
     print('cat is:', category)
     paginator = Paginator(items, count)

@@ -1,6 +1,3 @@
-from pathlib import Path
-
-from django.core.files.storage import FileSystemStorage
 from django.core.validators import MinValueValidator, \
     MaxValueValidator
 from django.db import models
@@ -18,8 +15,6 @@ class Item(models.Model):
     image = models.ImageField(upload_to='photos/')
     description = models.CharField(max_length=400)
     type = models.ForeignKey('ItemType', on_delete=models.CASCADE)
-    # review = models.ManyToManyField('users.User', through='Review',
-    #                                 related_name='items')
     name_slug = models.SlugField()
     add_time = models.DateTimeField(default = timezone.now)
 

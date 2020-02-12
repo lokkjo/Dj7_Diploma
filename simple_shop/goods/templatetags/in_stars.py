@@ -1,8 +1,9 @@
 from django import template
 
 register = template.Library()
+STAR = '★'
+
 
 @register.filter
 def in_stars(integer):
-    star = '★'
-    return star * int(integer)
+    return STAR * int(integer)
