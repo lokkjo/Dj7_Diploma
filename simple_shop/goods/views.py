@@ -74,7 +74,7 @@ def items_by_category(request, item_type_slug):
     page_num = int(request.GET.get('page', 1))
     count = CATEGORY_ITEMS_COUNT
     template = 'goods/items_by_cat.html'
-    items = Item.objects.all().prefetch_related('type')\.filter \
+    items = Item.objects.all().select_related('type').filter \
         (type__slug=item_type_slug).order_by('-add_time')
     category = items.first().type.display_name
     print('cat is:', category)
