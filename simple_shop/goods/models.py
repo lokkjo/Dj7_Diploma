@@ -11,7 +11,7 @@ class Item(models.Model):
     """
     Модель наименования товара
     """
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, unique=True)
     image = models.ImageField(upload_to='photos/')
     description = models.CharField(max_length=400)
     type = models.ForeignKey('ItemType', on_delete=models.CASCADE)
@@ -31,8 +31,8 @@ class ItemType(models.Model):
     Модель категории товара, поле name используется для заголовка
     страницы категории
     """
-    slug = models.CharField(max_length=32)
-    display_name = models.CharField(max_length=32, default='NewName')
+    slug = models.CharField(max_length=32, unique=True)
+    display_name = models.CharField(max_length=32, default='NewName', unique=True)
 
     class Meta:
         verbose_name = 'категория товара'
